@@ -1,0 +1,39 @@
+version: "3.0"
+services:
+  frontend:
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app
+      - frontend-node_modules:/app/node_modules
+      - frontend-next:/app/.next
+    depends_on:
+      - backend
+    restart: always
+  backend:
+    expose:
+      - "4000"
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app
+      - backend-node_modules:/app/node_modules
+  nginx:
+    container_name: nginx-dr
+    image: nginx:latest
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+
+volumes:
+  frontend-node_modules:
+  frontend-next:
+  backend-node_modules:
